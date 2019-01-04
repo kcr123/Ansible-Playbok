@@ -1,0 +1,27 @@
+tomcat playbook
+---
+ - hosts: all
+   tasks:
+     - name: apache tomcat is install or not
+       stat:
+         path: /opt/apache-tomcat-7.0.92
+       register: tomcat_result
+     - name: install apache tomcat if it is not installed
+       get_url:
+         url: http://www-us.apache.org/dist/tomcat/tomcat-7/v7.0.92/bin/apache-tomcat-7.0.92.tar.gz
+         dest: /opt
+       when: tomcat_result.stat.exists == false
+     - name: check tar file is there or not
+       stat:
+         path: /opt/apache-tomcat-7.0.92.tar.gz
+       register: tar_result
+     - name: extract tar file
+       unarchive:
+         src: /opt//apache-tomcat-7.0.92.tar.gz
+         dest: /opt
+         remote_src: true
+       when: tar_result.stat.exists == true
+	    - name: start tomcat
+       shell: sh /opt/apache-tomcat-7.0.92/bin/startup.sh
+       
+
